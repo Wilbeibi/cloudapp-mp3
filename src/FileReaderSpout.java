@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,76 +12,102 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 public class FileReaderSpout implements IRichSpout {
-  private SpoutOutputCollector _collector;
-  private TopologyContext context;
+	private SpoutOutputCollector _collector;
+	private TopologyContext context;
+	private BufferedReader _reader;
+	private String _filename;
+	
+	public FileReaderSpout(String filename) {
+		this._filename = filename;
+	}
 
+	@Override
+	public void open(Map conf, TopologyContext context,
+			SpoutOutputCollector collector) {
 
-  @Override
-  public void open(Map conf, TopologyContext context,
-                   SpoutOutputCollector collector) {
+		/*
+		 * ----------------------TODO----------------------- Task: initialize
+		 * the file reader
+		 * 
+		 * 
+		 * -------------------------------------------------
+		 */
 
-     /*
-    ----------------------TODO-----------------------
-    Task: initialize the file reader
+		this.context = context;
+		this._collector = collector;
+		try {
+			this._reader = new BufferedReader(new FileReader(_filename));
+		} catch (FileNotFoundException e) {
+			// e.printStackTrace();
+		}
 
+	}
 
-    ------------------------------------------------- */
+	@Override
+	public void nextTuple() {
 
-    this.context = context;
-    this._collector = collector;
-  }
+		/*
+		 * ----------------------TODO----------------------- Task: 1. read the
+		 * next line and emit a tuple for it 2. don't forget to sleep when the
+		 * file is entirely read to prevent a busy-loop
+		 * 
+		 * -------------------------------------------------
+		 */
+		String line = null;
+		try {
+			line = _reader.readLine();
+			_collector.emit(new Values(line));
+		} catch (IOException e) {
+			// e.printStackTrace();
+		}
+		if (line == null) {
+			return;
+		}
 
-  @Override
-  public void nextTuple() {
+	}
 
-     /*
-    ----------------------TODO-----------------------
-    Task:
-    1. read the next line and emit a tuple for it
-    2. don't forget to sleep when the file is entirely read to prevent a busy-loop
+	@Override
+	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 
-    ------------------------------------------------- */
+		declarer.declare(new Fields("word"));
 
+	}
 
-  }
+	@Override
+	public void close() {
+		/*
+		 * ----------------------TODO----------------------- Task: close the
+		 * file
+		 * 
+		 * 
+		 * -------------------------------------------------
+		 */
+		try {
+			_reader.close();
+		} catch (IOException e) {
+			// e.printStackTrace();
+		}
 
-  @Override
-  public void declareOutputFields(OutputFieldsDeclarer declarer) {
+	}
 
-    declarer.declare(new Fields("word"));
+	@Override
+	public void activate() {
+	}
 
-  }
+	@Override
+	public void deactivate() {
+	}
 
-  @Override
-  public void close() {
-   /*
-    ----------------------TODO-----------------------
-    Task: close the file
+	@Override
+	public void ack(Object msgId) {
+	}
 
+	@Override
+	public void fail(Object msgId) {
+	}
 
-    ------------------------------------------------- */
-
-  }
-
-
-  @Override
-  public void activate() {
-  }
-
-  @Override
-  public void deactivate() {
-  }
-
-  @Override
-  public void ack(Object msgId) {
-  }
-
-  @Override
-  public void fail(Object msgId) {
-  }
-
-  @Override
-  public Map<String, Object> getComponentConfiguration() {
-    return null;
-  }
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		return null;
+	}
 }

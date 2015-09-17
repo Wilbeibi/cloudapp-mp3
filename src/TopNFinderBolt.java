@@ -30,7 +30,13 @@ public class TopNFinderBolt extends BaseBasicBolt {
 
     ------------------------------------------------- */
 
-
+	  String word = tuple.getStringByField("word");
+	  if (currentTopWords.containsKey(word)) {
+		  currentTopWords.put(word, currentTopWords.get(word));
+	  } else {
+		  currentTopWords.put(word, 1);
+	  }
+	  
     //reports the top N words periodically
     if (System.currentTimeMillis() - lastReportTime >= intervalToReport) {
       collector.emit(new Values(printMap()));
