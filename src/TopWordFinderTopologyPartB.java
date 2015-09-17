@@ -39,7 +39,8 @@ public class TopWordFinderTopologyPartB {
 
 
     ------------------------------------------------- */
-
+    
+    builder.setSpout("spout", new FileReaderSpout());
 
     config.setMaxTaskParallelism(3);
 
